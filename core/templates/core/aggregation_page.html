@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Data Deduplication Tool</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 1: Root Variables and Color Themes
+        * -------------------------------------------------------------------------
+        */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #ecf0f1;
+            --card-bg: #ffffff;
+            --header-bg-color: #2c3e50;
+            --text-color: #34495e;
+            --text-light: #7f8c8d;
+            --border-color: #e0e6ed;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.1);
+            --success-bg: #d4edda;
+            --success-color: #155724;
+            --info-bg: #d1ecf1;
+            --info-color: #0c5460;
+            --danger-bg: #f8d7da;
+            --danger-color: #721c24;
+        }
+
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --card-bg: #2b2b2b;
+            --text-color: #ecf0f1;
+            --text-light: #bdc3c7;
+            --border-color: #444;
+            --primary-color: #bdc3c7;
+            --secondary-color: #6a89cc;
+            --accent-color: #e74c3c;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.5);
+            --success-bg: #1c4b22;
+            --success-color: #92e6a7;
+            --info-bg: #1a3c42;
+            --info-color: #8be1ff;
+            --danger-bg: #5f1e24;
+            --danger-color: #e28a96;
+            --header-bg-color: #2b2b2b;
+        }
+
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 2: Global Styles and Page Layout
+        * -------------------------------------------------------------------------
+        */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+    
+        }
+
+        .header-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: var(--header-bg-color);
+            color: white;
+            padding: 1rem 0; /* Reduced padding */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+            flex-shrink: 0;
+        }
+
+        .header {
+            text-align: center;
+            max-width: 960px;
+            width: 90%;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        #theme-toggle {
+            position: absolute;
+            top: 0.5rem;
+            right: 1.5rem;
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            color: #bdc3c7;
+        }
+
+        .container {
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 960px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 3: Card and Form Styling
+        * -------------------------------------------------------------------------
+        */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+            padding: 2rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .file-input-wrapper {
+            width: 100%;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s;
+        }
+        
+        .file-input-wrapper:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .file-input-wrapper i {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-wrapper p {
+            margin: 0.5rem 0;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: var(--card-bg);
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 4: Results and Table Styling
+        * -------------------------------------------------------------------------
+        */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .results-section-content {
+            flex-grow: 1;
+            padding-top: 1rem;
+        }
+
+        .results-section h4 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .results-table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-light);
+            background-color: var(--card-bg);
+           
+        }
+        
+        .results-table-container table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+             overflow-y: auto;
+             overflow: visible;
+        }
+        
+        .results-table-container table th, .results-table-container table td {
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s;
+        }
+
+        .results-table-container table th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .results-table-container table tbody tr:nth-child(odd) {
+            background-color: var(--card-bg);
+        }
+        
+        .results-table-container table tbody tr:nth-child(even) {
+            background-color: var(--bg-color);
+        }
+
+        .results-table-container table tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 5: Alerts and Messages
+        * -------------------------------------------------------------------------
+        */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .alert-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        .alert-success {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        .alert-info {
+            background-color: var(--info-bg);
+            color: var(--info-color);
+            border: 1px solid var(--info-color);
+        }
+        
+        /*
+        * -------------------------------------------------------------------------
+        * SECTION 6: Animations and Responsiveness
+        * -------------------------------------------------------------------------
+        */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            .header-container {
+                padding: 1.5rem 0;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .header p {
+                font-size: 1rem;
+            }
+            .container {
+                width: 100%;
+                padding: 0;
+            }
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header">
+            <h1>Advanced Data Deduplication Tool</h1>
+            <p>Empower your data analysis with intelligent fuzzy string matching.</p>
+            <button id="theme-toggle" title="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-upload"></i> Upload Data</div>
+                <form id="aggregation-form" class="form-group" action="{% url 'aggregation_view' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="document" class="file-input-wrapper">
+                        <i class="fas fa-file-upload fa-2x" style="color: var(--secondary-color);"></i>
+                        <p style="margin: 0.5rem 0;">Click to select a CSV file</p>
+                        <input type="file" name="document" id="document" required>
+                    </label>
+                    <button type="submit" class="btn">Aggregate Data</button>
+                </form>
+            </div>
+
+            <div id="results-card" class="card results-section">
+                <div class="card-title">Analysis Results</div>
+                <div id="results-card-content" class="results-section-content">
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle fa-lg"></i>
+                            <div><strong>Error:</strong> {{ error }}</div>
+                        </div>
+                    {% elif results %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle fa-lg"></i>
+                            <div>
+                                <strong>Success!</strong> Aggregation complete. Grouped by <strong>'{{ group_by_col }}'</strong> and aggregated on <strong>'{{ aggregate_col }}'</strong>.
+                            </div>
+                        </div>
+                        <div class="results-table-container">
+                            {{ results|safe }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle fa-lg"></i>
+                            <div>
+                                <strong>Get Started:</strong> Upload a CSV file and click "Aggregate Data" to see results.
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    </script>
+</body>
+</html>
