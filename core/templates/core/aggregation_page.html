@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Advanced Data Deduplication Tool</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
 
     <style>
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 1: Root Variables and Color Themes
-        * -------------------------------------------------------------------------
-        */
+        /* Root Variables and Theme Colors */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -54,11 +50,7 @@
             --header-bg-color: #2b2b2b;
         }
 
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 2: Global Styles and Page Layout
-        * -------------------------------------------------------------------------
-        */
+        /* Global Styles */
         html, body {
             margin: 0;
             padding: 0;
@@ -73,7 +65,8 @@
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s, color 0.3s;
-    
+
+            overflow-x: hidden;
         }
 
         .header-container {
@@ -82,9 +75,8 @@
             justify-content: center;
             background-color: var(--header-bg-color);
             color: white;
-            padding: 1rem 0; /* Reduced padding */
+            padding: 1rem 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
             flex-shrink: 0;
         }
 
@@ -95,11 +87,11 @@
             margin: 0 auto;
             position: relative;
         }
-        
+
         #theme-toggle {
             position: absolute;
             top: 0.5rem;
-            right: 1.5rem;
+            right: 1rem;
             background-color: transparent;
             border: 1px solid white;
             color: white;
@@ -112,7 +104,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         #theme-toggle:hover {
             background-color: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
@@ -138,7 +130,7 @@
             flex-direction: column;
             align-items: center;
         }
-        
+
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 3fr;
@@ -153,11 +145,7 @@
             }
         }
 
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 3: Card and Form Styling
-        * -------------------------------------------------------------------------
-        */
+        /* Cards and Forms */
         .card {
             background-color: var(--card-bg);
             border-radius: 8px;
@@ -180,7 +168,6 @@
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 0.5rem;
-            flex-shrink: 0;
         }
 
         .form-group {
@@ -188,6 +175,7 @@
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
+            width: 100%;
         }
 
         .file-input-wrapper {
@@ -199,21 +187,10 @@
             cursor: pointer;
             transition: border-color 0.3s ease, background-color 0.3s;
         }
-        
+
         .file-input-wrapper:hover {
             border-color: var(--secondary-color);
             background-color: rgba(52, 152, 219, 0.05);
-        }
-
-        .file-input-wrapper i {
-            color: var(--secondary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-input-wrapper p {
-            margin: 0.5rem 0;
-            font-weight: 500;
-            color: var(--text-color);
         }
 
         .file-input-wrapper input[type="file"] {
@@ -240,17 +217,13 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 4: Results and Table Styling
-        * -------------------------------------------------------------------------
-        */
+        /* Results Section */
         .results-section {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
-        
+
         .results-section-content {
             flex-grow: 1;
             padding-top: 1rem;
@@ -263,7 +236,7 @@
             margin-top: 0;
             margin-bottom: 1rem;
         }
-        
+
         .results-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -273,113 +246,94 @@
 
         .results-table-container {
             width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
             overflow-x: auto;
             border-radius: 6px;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-light);
             background-color: var(--card-bg);
-           
         }
-        
+
         .results-table-container table {
             width: 100%;
             min-width: 700px;
             border-collapse: collapse;
-             overflow-y: auto;
-             overflow: visible;
         }
-        
-        .results-table-container table th, .results-table-container table td {
+
+        .results-table-container th,
+        .results-table-container td {
             padding: 12px;
             text-align: left;
             font-size: 0.9rem;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            transition: background-color 0.3s;
         }
 
-        .results-table-container table th {
+        .results-table-container th {
             background-color: var(--bg-color);
             font-weight: 600;
             text-transform: uppercase;
         }
-        
-        .results-table-container table tbody tr:nth-child(odd) {
-            background-color: var(--card-bg);
-        }
-        
-        .results-table-container table tbody tr:nth-child(even) {
+
+        .results-table-container tr:nth-child(even) {
             background-color: var(--bg-color);
         }
 
-        .results-table-container table tbody tr:hover {
+        .results-table-container tr:nth-child(odd) {
+            background-color: var(--card-bg);
+        }
+
+        .results-table-container tr:hover {
             background-color: rgba(52, 152, 219, 0.1);
         }
 
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 5: Alerts and Messages
-        * -------------------------------------------------------------------------
-        */
+        /* Alerts */
         .alert {
-            padding: 1rem;
-            border-radius: 6px;
+            padding: 1.25rem;
+            border-radius: 8px;
             font-weight: 500;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 1rem;
-            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.4;
+            font-size: 0.95rem;
         }
+
         .alert-danger {
             background-color: var(--danger-bg);
             color: var(--danger-color);
             border: 1px solid var(--danger-color);
         }
+
         .alert-success {
             background-color: var(--success-bg);
             color: var(--success-color);
             border: 1px solid var(--success-color);
         }
+
         .alert-info {
             background-color: var(--info-bg);
             color: var(--info-color);
             border: 1px solid var(--info-color);
         }
-        
-        /*
-        * -------------------------------------------------------------------------
-        * SECTION 6: Animations and Responsiveness
-        * -------------------------------------------------------------------------
-        */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-            .header-container {
-                padding: 1.5rem 0;
-            }
             .header h1 {
                 font-size: 2rem;
             }
-            .header p {
-                font-size: 1rem;
-            }
+
             .container {
-                width: 100%;
-                padding: 0;
+                padding: 0.5rem;
             }
+
             .card {
-                padding: 1rem;
+                padding: 0.5rem;
+            }
+
+            .results-table-container table {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -394,7 +348,7 @@
             </button>
         </div>
     </div>
-    
+
     <div class="container">
         <div class="main-grid">
             <div class="card">
@@ -402,10 +356,11 @@
                 <form id="aggregation-form" class="form-group" action="{% url 'aggregation_view' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="document" class="file-input-wrapper">
-                        <i class="fas fa-file-upload fa-2x" style="color: var(--secondary-color);"></i>
-                        <p style="margin: 0.5rem 0;">Click to select a CSV file</p>
+                        <i class="fas fa-file-upload fa-2x"></i>
+                        <p>Click to select a CSV file</p>
                         <input type="file" name="document" id="document" required>
                     </label>
+                    <p id="file-name" style="color: var(--text-light); font-style: italic;"></p>
                     <button type="submit" class="btn">Aggregate Data</button>
                 </form>
             </div>
@@ -442,16 +397,29 @@
     </div>
 
     <script>
-        document.getElementById('theme-toggle').addEventListener('click', function() {
+        // Theme toggle with persistence
+        const toggleButton = document.getElementById('theme-toggle');
+        const icon = toggleButton.querySelector('i');
+        const savedTheme = localStorage.getItem('theme');
+
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+
+        toggleButton.addEventListener('click', function () {
             document.body.classList.toggle('dark-mode');
-            const icon = this.querySelector('i');
-            if (document.body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            icon.classList.toggle('fa-moon', !isDark);
+            icon.classList.toggle('fa-sun', isDark);
+        });
+
+        // File name display
+        document.getElementById('document').addEventListener('change', function () {
+            const fileName = this.files[0]?.name || "No file chosen";
+            document.getElementById('file-name').textContent = fileName;
         });
     </script>
 </body>
